@@ -15,40 +15,46 @@ import { ClassGetter } from '@angular/compiler/src/output/output_ast';
 export class HomePage {
 
   fileTransfer: FileTransferObject;
-
+  private fileName: string;
   constructor(public navCtrl: NavController, private media: Media, public file: File, private mediaCapture: MediaCapture, private transfer: FileTransfer, private http: HttpClient) {
     this.fileTransfer = this.transfer.create();
   }
 
   startRecord() {
 
-
+    this.fileName = this.file.externalRootDirectory.replace(/file:\/\//g, '') + 'audio.wav';
     // Recording to a file
-    const file: MediaObject = this.media.create(this.file.externalRootDirectory + 'audio.wav');
-    file.startRecord();
+    const audioObject: MediaObject = this.media.create(this.fileName);
+    audioObject.startRecord();
+    console.log('cache dir: ' + this.file.cacheDirectory);
+    console.log('start recording ' + this.fileName);
     setTimeout(() => {
       console.log("reording complete");
-      file.stopRecord();
-      file.play();
+      audioObject.stopRecord();
+      console.log('duration: ' + audioObject.getDuration());
+      audioObject.release();
+      console.log()
+      audioObject.play();
+      console.log('done recording' + this.fileName);
+      
 
       let options: FileUploadOptions = {
         fileKey: 'audio file',
         fileName: 'audio.wav',
         chunkedMode: false,
         httpMethod: 'POST',
-        mimeType: "audio/wave",
+        mimeType: "audio/wav",
         headers: {
-          "Content-Type": "audio/wav"
+          'Content-Type': 'multipart/form-data'
         }
       }
-      console.log(this.file.externalApplicationStorageDirectory)
-      console.log(this.file.tempDirectory)
-      console.log(this.file.applicationDirectory)
-      console.log(this.file.externalDataDirectory)
-      console.log(this.file.documentsDirectory)
-      console.log(this.file.externalRootDirectory)
-
-      this.fileTransfer.upload(this.file.externalRootDirectory + 'audio.wav', 'https://abbvie-voice-search.herokuapp.com/audioUpload', options, true)
+      // // console.log(this.file.externalApplicationStorageDirectory)
+      // // console.log(this.file.tempDirectory)
+      // // console.log(this.file.applicationDirectory)
+      // console.log(this.file.externalDataDirectory)
+      // // console.log(this.file.documentsDirectory)
+      // console.log(this.file.externalRootDirectory)
+      this.fileTransfer.upload(this.fileName, 'https://abbvie-voice-search.herokuapp.com/audioUpload', options, true)
         .then((data) => {
           // success
           console.log(data.response)
@@ -60,7 +66,6 @@ export class HomePage {
         console.log(e.eventPhase)
       })
     }, 3000);
-
 
 
     // console.log("recording")
