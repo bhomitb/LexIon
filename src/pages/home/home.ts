@@ -17,12 +17,17 @@ export class HomePage {
   audioName:any;
   fileTransfer: FileTransferObject;
   private fileName: string;
-  constructor(public navCtrl: NavController, private media: Media, public file: File, private mediaCapture: MediaCapture, private transfer: FileTransfer, private http: HttpClient) {
+  constructor(public navCtrl: NavController, 
+    private media: Media,
+     public file: File, 
+     private mediaCapture: MediaCapture, 
+     private transfer: FileTransfer, 
+     private http: HttpClient) {
     this.fileTransfer = this.transfer.create();
   }
 
   startRecord() {
-    //Media
+    // //Media
     // this.fileName = this.file.externalRootDirectory.replace(/file:\/\//g, '') + 'audio.wav';
     // // Recording to a file
     // const audioObject: MediaObject = this.media.create(this.fileName);
@@ -88,6 +93,7 @@ let options: FileUploadOptions = {
     })
 
   }
+}
 }
 
 
