@@ -10,7 +10,7 @@ import { Media, MediaObject } from '@ionic-native/media';
 import { File } from '@ionic-native/file';
 import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer';
 import { HttpClientModule } from '@angular/common/http';
-
+import { Storage } from '@ionic/storage';
 @NgModule({
   declarations: [
     MyApp,
@@ -33,7 +33,8 @@ import { HttpClientModule } from '@angular/common/http';
     MediaCapture,
     Media,
     File,
-    FileTransfer
+    FileTransfer,
+    Storage
   ]
 })
 export class AppModule {}

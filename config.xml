@@ -86,4 +86,7 @@
     <plugin name="cordova-plugin-file-transfer" spec="^1.7.1" />
     <engine name="android" spec="~6.3.0" />
     <plugin name="cordova-plugin-media-capture" spec="^3.0.1" />
+<edit-config file="*-Info.plist" mode="merge" target="NSMicrophoneUsageDescription">
+    <string>We would like to access your microphone for recording</string>
+</edit-config>
 </widget>

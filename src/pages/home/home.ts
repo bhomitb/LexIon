@@ -7,7 +7,8 @@ import { MediaCapture } from '@ionic-native/media-capture';
 import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer';
 import { HttpClient } from '@angular/common/http';
 import { ClassGetter } from '@angular/compiler/src/output/output_ast';
-
+import { Storage } from '@ionic/storage';
+const MEDIA_FILES_KEY = 'mediaFiles';
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html'
@@ -17,15 +18,24 @@ export class HomePage {
   audioName:any;
   fileTransfer: FileTransferObject;
   private fileName: string;
+  
   constructor(public navCtrl: NavController, 
     private media: Media,
      public file: File, 
      private mediaCapture: MediaCapture, 
      private transfer: FileTransfer, 
-     private http: HttpClient) {
+     private http: HttpClient,
+     private storage: Storage) {
     this.fileTransfer = this.transfer.create();
   }
+  
+  mediaFiles = [];
 
+  ionViewDidLoad() {
+    this.storage.get(MEDIA_FILES_KEY).then(res => {
+      this.mediaFiles = JSON.parse(res) || [];
+    })
+  }
   startRecord() {
     // //Media
     // this.fileName = this.file.externalRootDirectory.replace(/file:\/\//g, '') + 'audio.wav';
@@ -67,9 +77,12 @@ export class HomePage {
     //   })
     // }, 3000);
     //Media Capture
-    this.mediaCapture.captureAudio().then((data)=>{
-this.audioURI = data;
-console.log(this.audioURI);
+    
+    this.mediaCapture.captureAudio().then(res => {
+      this.storeMediaFiles(res);
+    }, (err: CaptureError) => console.error(err));
+  }
+  upload(){
 let options: FileUploadOptions = {
       fileKey: 'audio file',
       fileName: 'audio.wav',
@@ -88,12 +101,30 @@ let options: FileUploadOptions = {
         // error
         console.log(err)
       })
-}, (err) => {
-  console.log(err);
+}
+  storeMediaFiles(files) {
+    this.storage.get(MEDIA_FILES_KEY).then(res => {
+      if (res) {
+        let arr = JSON.parse(res);
+        arr = arr.concat(files);
+        this.storage.set(MEDIA_FILES_KEY, JSON.stringify(arr));
+      } else {
+        this.storage.set(MEDIA_FILES_KEY, JSON.stringify(files))
+      }
+      this.mediaFiles = this.mediaFiles.concat(files);
     })
-
   }
-}
-}
+  play(myFile) {
+    if (myFile.name.indexOf('.wav') > -1) {
+      const audioFile: MediaObject = this.media.create(myFile.localURL);
+      audioFile.play();
+    } else {
+      console.log("Not an audio file")
+    }
+  }
+  }
+
+
+
 
 
